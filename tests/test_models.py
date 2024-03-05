@@ -1,11 +1,8 @@
 # Copyright 2016, 2023 John J. Rofrano. All Rights Reserved.
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-#
 # https://www.apache.org/licenses/LICENSE-2.0
-#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -101,17 +98,17 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(new_product.available, product.available)
         self.assertEqual(new_product.category, product.category)
 
-    #
     # ADD YOUR TEST CASES HERE
-    #
+
     def test_read_a_product(self):
         """ It should read a product """
+
         product = ProductFactory()
         product.id = None
         product.create()
         self.assertIsNotNone(product.id)
         # Fetch back
-        found_product = Product.find(product_id)
+        found_product = Product.find(product.id)
         self.assertEqual(found_product.id, product.id)
         self.assertEqual(found_product.name, product.name)
         self.assertEqual(found_product.description, product.description)
@@ -119,7 +116,7 @@ class TestProductModel(unittest.TestCase):
 
     def test_update_a_product(self):
         """ It should update a product """
-        product = Product()
+        product = ProductFactory()
         product.id = None
         product.create()
         self.assertIsNotNone(product.id)
@@ -127,7 +124,7 @@ class TestProductModel(unittest.TestCase):
         product.description = "testing"
         original_id = product.id
         product.update()
-        self.assertEqual(product.id, original.id)
+        self.assertEqual(product.id, original_id)
         self.assertEqual(product.description, "testing")
         # Fetch it back and make sure id hasn't changed
         # but the data did change
@@ -140,14 +137,14 @@ class TestProductModel(unittest.TestCase):
         """ It should delete a product """
         product = ProductFactory()
         product.create()
-        self.assertEqual(len(Product.all), 1)
+        self.assertEqual(len(Product.all()), 1)
         # delete the product and make sure it isn't in the database
         product.delete()
-        self.assertEqual(len(Product.all), 0)
+        self.assertEqual(len(Product.all()), 0)
 
     def test_list_all_products(self):
         """ It should list all products """
-        products = Product.add()
+        products = Product.all()
         self.assertEqual(products, [])
         # Create 5 products
         for _ in range(5):

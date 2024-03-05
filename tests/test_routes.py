@@ -28,6 +28,7 @@ import os
 import logging
 from decimal import Decimal
 from unittest import TestCase
+from urllib.parse import quote_plus
 from service import app
 from service.common import status
 from service.models import db, init_db, Product
@@ -173,15 +174,15 @@ class TestProductRoutes(TestCase):
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(data["name"], test.product.name)
-    
+        self.assertEqual(data["name"], test_product.name)
+
     def test_get_product_not_found(self):
         """ It should not get a product thats not found """
-        response = self.client.get(f"{BASE_URL/0")
+        response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         self.assertIn("was not found", data["message"])
-    
+
     def test_update_product(self):
         """It should Update an existing Product"""
         # create a product to update
@@ -213,13 +214,13 @@ class TestProductRoutes(TestCase):
 
     def test_get_product_list(self):
         """ It should get a list of products """
-        self.create_products(5)
+        self._create_products(5)
         response = self.client.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
 
-     def test_query_by_name(self):
+    def test_query_by_name(self):
         """It should Query Products by name"""
         products = self._create_products(5)
         test_name = products[0].name
@@ -255,7 +256,7 @@ class TestProductRoutes(TestCase):
         """It should Query Products by availability"""
         products = self._create_products(10)
         available_products = [product for product in products if product.available is True]
-        available_count = len(available_products)        
+        available_count = len(available_products)
         # test for available
         response = self.client.get(
             BASE_URL, query_string="available=true"
